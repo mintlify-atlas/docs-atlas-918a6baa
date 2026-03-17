@@ -1,0 +1,206 @@
+---
+title: "Export formats"
+description: "Technical reference for every export format and its function signature"
+---
+
+All export functions accept the same two arguments — `patternData` and `patternConfig` — plus an optional filename. They trigger a browser file download.
+
+## Common parameters
+
+<ParamField body="patternData" type="object" required>
+  The processed pattern output from `processImage` or `processImageAsync`.
+
+  <Expandable title="patternData properties">
+    <ResponseField name="colorMatrix" type="Array<Array<object>>" required>
+      2D array of cell color objects (see [Image processing](/reference/image-processing) for the full shape).
+    </ResponseField>
+    <ResponseField name="paletteMap" type="Map<string, object>" required>
+      Map from hex color string to `{ symbol, r, g, b }`.
+    </ResponseField>
+    <ResponseField name="symbolMatrix" type="Array<Array<string | null>>" required>
+      2D array of symbol strings, or `null` for transparent cells.
+    </ResponseField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="patternConfig" type="object" required>
+  The configuration used to generate the pattern.
+
+  <Expandable title="patternConfig properties">
+    <ResponseField name="cols" type="number" required>
+      Number of columns in the grid.
+    </ResponseField>
+    <ResponseField name="rows" type="number" required>
+      Number of rows in the grid.
+    </ResponseField>
+    <ResponseField name="lockAspect" type="boolean" required>
+      Whether the aspect ratio was locked during grid resizing.
+    </ResponseField>
+    <ResponseField name="colorThreshold" type="number" required>
+      Color merging threshold, 0–50.
+    </ResponseField>
+    <ResponseField name="alphaThreshold" type="number" required>
+      Alpha inclusion threshold, 0–100.
+    </ResponseField>
+  </Expandable>
+</ParamField>
+
+---
+
+## `exportToPNG`
+
+```javascript
+exportToPNG(patternData, patternConfig, filename = 'alpha-pattern.png')
+```
+
+Renders the pattern to an off-screen canvas and exports it as a PNG image. The cell size is calculated to maximize resolution while keeping the canvas within an 8000×8000 px budget:
+
+```javascript
+cellSize = max(20, min(floor(8000 / cols), floor(8000 / rows)))
+```
+
+The resulting canvas dimensions are `cols × cellSize` by `rows × cellSize`.
+
+Transparent cells are rendered as a checkerboard using alternating colors `#e0e0e0` and `#c0c0c0`, matching the standard convention for transparency in image editors.
+
+<ParamField body="filename" type="string" default="alpha-pattern.png">
+  Output filename for the downloaded file.
+</ParamField>
+
+---
+
+## `exportToExcel`
+
+```javascript
+exportToExcel(patternData, patternConfig, filename = 'alpha-pattern.xlsx')
+```
+
+Exports a `.xlsx` workbook using [SheetJS](https://sheetjs.com/). The workbook contains two sheets:
+
+| Sheet | Contents |
+|---|---|
+| Patrón | Symbol matrix — each cell contains the letter symbol for that grid position |
+| Paleta | Color legend — maps each symbol to its hex value, R, G, and B components |
+
+Cell dimensions are standardized:
+- **Column width:** 4 character units
+- **Row height:** 20 points
+
+<Warning>
+The free SheetJS edition does not support cell background fill colors. The **Patrón** sheet contains symbols only, with no color formatting. Use `exportToExcelColored` or `exportToGoogleSheetsColored` for color-filled output.
+</Warning>
+
+<ParamField body="filename" type="string" default="alpha-pattern.xlsx">
+  Output filename for the downloaded file.
+</ParamField>
+
+---
+
+## `exportToExcelColored`
+
+```javascript
+exportToExcelColored(patternData, patternConfig, filename = 'alpha-pattern-color.xls')
+```
+
+Exports a color-filled pattern as an `.xls` file using an HTML table written with the XLS MIME type. Each cell is rendered with:
+
+- `background-color` set to the cell's hex color
+- Symbol text with a contrasting foreground color (calculated via the luma formula — see [`getTextColor`](/reference/image-processing#helper-functions))
+- Fixed 20×20 px cell dimensions via inline styles
+
+The file opens correctly in Microsoft Excel and LibreOffice Calc.
+
+<Note>
+This format uses HTML-based XLS encoding, not the OOXML format used by `.xlsx`. It is widely supported but lacks advanced spreadsheet features.
+</Note>
+
+<ParamField body="filename" type="string" default="alpha-pattern-color.xls">
+  Output filename for the downloaded file.
+</ParamField>
+
+---
+
+## `exportToCSV`
+
+```javascript
+exportToCSV(patternData, patternConfig, filename = 'alpha-pattern.csv')
+```
+
+Exports a UTF-8 BOM CSV file. The file is structured in two sections:
+
+1. **Symbol matrix** — rows 1 through N, where each column contains the symbol for that cell. Transparent cells use an empty string.
+2. **Color palette** — appended after a blank separator row, starting with a `--- PALETA DE COLORES ---` header row, followed by one row per color with columns: Symbol, HEX, R, G, B.
+
+The UTF-8 BOM (`\uFEFF`) is prepended to ensure correct character encoding when opened in Excel on Windows.
+
+<ParamField body="filename" type="string" default="alpha-pattern.csv">
+  Output filename for the downloaded file.
+</ParamField>
+
+---
+
+## `exportToCSVColored`
+
+```javascript
+exportToCSVColored(patternData, patternConfig, filename = 'alpha-pattern-color.html')
+```
+
+Despite the `CSV` name, this function exports a self-contained `.html` file — a standalone HTML page with a color-filled table.
+
+Formatting details:
+
+- Dark-themed background: `#13131a`
+- Each cell has its background color applied via inline styles
+- Symbol text uses a contrasting foreground color
+- Transparent cells use a `conic-gradient` CSS checkerboard pattern
+- A palette legend is rendered below the main table
+
+<Tip>
+This format is useful for sharing patterns as a single portable file that can be opened in any browser without needing a spreadsheet application.
+</Tip>
+
+<ParamField body="filename" type="string" default="alpha-pattern-color.html">
+  Output filename for the downloaded file.
+</ParamField>
+
+---
+
+## `exportToGoogleSheetsColored`
+
+```javascript
+exportToGoogleSheetsColored(patternData, patternConfig, filename = 'alpha-pattern-sheets.xlsx')
+```
+
+Exports a color-filled `.xlsx` workbook compatible with Google Sheets (and Excel). Unlike `exportToExcel`, this format uses OOXML ARGB fill colors, which are supported by the SheetJS pro API or equivalent methods.
+
+ARGB values are formatted as:
+
+```
+FF{rr}{gg}{bb}
+```
+
+where `FF` is the fully opaque alpha prefix and `rr`, `gg`, `bb` are the hex components of the cell color.
+
+The workbook contains two sheets:
+
+| Sheet | Contents |
+|---|---|
+| Patrón | Color-filled symbol cells |
+| Paleta | Legend with HEX column and a color-filled swatch column |
+
+<ParamField body="filename" type="string" default="alpha-pattern-sheets.xlsx">
+  Output filename for the downloaded file.
+</ParamField>
+
+---
+
+## Format comparison
+
+| Format | File type | Color fills | Best for |
+|---|---|---|---|
+| `exportToPNG` | `.png` | Yes (rendered) | Sharing images, printing |
+| `exportToExcel` | `.xlsx` | No | Editing symbols in Excel |
+| `exportToExcelColored` | `.xls` | Yes (HTML) | Color view in Excel/Calc |
+| `exportToCSV` | `.csv` | No | Data processing, plain text |
+| `exportToCSVColored` | `.html` | Yes (CSS) | Portable browser preview |
+| `exportToGoogleSheetsColored` | `.xlsx` | Yes (ARGB) | Google Sheets, Excel |

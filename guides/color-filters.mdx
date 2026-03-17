@@ -1,0 +1,78 @@
+---
+title: "Color filters"
+description: "Reduce palette complexity with color similarity merging and alpha threshold"
+---
+
+Two sliders in the controls panel determine how colors are sampled and merged before the pattern palette is built. Adjusting these is the primary way to control how many distinct colors appear in the final pattern.
+
+## Color similarity threshold
+
+The **color similarity threshold** slider ranges from **0 to 50** and merges colors that are close to each other in RGB space.
+
+### How it works
+
+Color distance is measured as Euclidean distance in RGB space. The maximum possible distance between any two colors is:
+
+```
+max distance = √(3 × 255²) ≈ 441.67
+```
+
+The slider value is a percentage of that maximum. At a threshold of 10%, for example, the merge radius is:
+
+```
+10% × 441.67 ≈ 44 RGB units
+```
+
+The algorithm is **greedy nearest-representative**:
+
+1. Colors are processed in insertion order as each cell's averaged color is produced.
+2. If a color falls within the threshold distance of an already-registered representative color, it is merged into that representative.
+3. If no representative is close enough, the color becomes a new representative and gets its own palette entry.
+
+The result is a palette where no two entries are closer than the threshold distance to each other.
+
+### Effect at different values
+
+| Threshold | Merge radius | Typical effect |
+|-----------|--------------|----------------|
+| 0% | 0 — no merging | Every unique averaged cell color gets its own palette entry. Palette can be very large. |
+| 5–15% | ~22–66 RGB units | Light merging of near-identical shades. Good balance for most craft patterns. |
+| 20–35% | ~88–154 RGB units | Moderate merging. Gradients collapse into broader color bands. |
+| 50% | ~221 RGB units | Aggressive merging. Most images reduce to a small handful of colors. |
+
+<Tip>
+  A threshold of **5–15%** is a practical sweet spot for friendship bracelet and cross-stitch patterns. Increase the value until the palette size feels manageable for your craft, then click **Generate Pattern** to apply.
+</Tip>
+
+## Alpha threshold
+
+The **alpha threshold** slider ranges from **0 to 100** and controls which pixels are treated as empty (transparent) cells.
+
+### How it works
+
+The slider value is converted to a minimum alpha byte value:
+
+```
+minAlpha = round((threshold / 100) × 255)
+```
+
+Any pixel whose alpha channel value is **less than or equal to** `minAlpha` is ignored — its cell is left empty in the pattern instead of contributing a color.
+
+### Effect at different values
+
+| Threshold | minAlpha | Effect |
+|-----------|----------|--------|
+| 0% (default) | 0 | All pixels included regardless of transparency. |
+| 20% | 51 | Pixels with opacity below ~20% treated as empty. |
+| 50% | 128 | Only pixels at half-opacity or above contribute a color. |
+| 100% | 255 | Only fully opaque pixels (alpha = 255) are included. |
+
+### When to use it
+
+The alpha threshold is most useful for **PNG images with transparent or semi-transparent areas**. Photographs and artwork often have soft, anti-aliased edges where pixels blend from full color to transparent. Without a threshold, those semi-transparent edge pixels introduce unwanted fringe colors into the palette.
+
+A value of **20–30%** removes most edge artifacts while keeping all the clearly visible pixels.
+
+<Note>
+  JPEG images do not have an alpha channel. All JPEG pixels have an implicit alpha of 255 (fully opaque), so the alpha threshold slider has no effect on them.
+</Note>

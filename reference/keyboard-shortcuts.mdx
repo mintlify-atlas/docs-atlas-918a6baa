@@ -1,0 +1,40 @@
+---
+title: "Mouse and toolbar controls"
+description: "All mouse interactions and toolbar buttons in the pattern preview"
+---
+
+<Note>
+There are no keyboard shortcuts in the current version. No keyboard event handlers are implemented in the source code. Use the toolbar buttons described below for all undo, redo, and mode-switching operations.
+</Note>
+
+## Canvas interactions
+
+All canvas interactions are mouse-based and depend on the currently active tool mode.
+
+| Interaction | Action |
+|---|---|
+| Scroll wheel up | Zoom in toward the cursor |
+| Scroll wheel down | Zoom out from the cursor |
+| Click and drag (Pan mode) | Pan the view |
+| Click (Pencil mode) | Paint the cell under the cursor |
+| Click and drag (Pencil mode) | Paint all cells the cursor passes over |
+
+## Toolbar buttons
+
+| Button | Function |
+|---|---|
+| 🖐 Move | Switch to pan mode |
+| ✏️ Pencil | Switch to pencil/paint mode |
+| ⏮ | Undo all strokes |
+| ↩ N | Undo the last stroke (N = number of remaining undoable strokes) |
+| ↪ N | Redo the last undone stroke (N = number of remaining redoable strokes) |
+| ⏭ | Redo all undone strokes |
+| Ajustar vista | Reset zoom and re-center the pattern in the viewport |
+
+<Note>
+The pencil color palette row — which shows color swatches for painting cells — is only visible when pencil mode is active.
+</Note>
+
+<Note>
+Keyboard shortcuts such as Ctrl+Z, Ctrl+Y, and Ctrl+Shift+Z are not currently implemented. Use the ↩ and ↪ toolbar buttons to undo and redo.
+</Note>

@@ -1,97 +1,74 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Image to Alpha Pattern"
+description: "Convert any image into a symbol-labeled color matrix for alpha patterns, cross-stitch, perler beads, and pixel art crafts."
 ---
 
-## Setting up
-
-Get your documentation site up and running in minutes.
-
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Upload an image and generate your first pattern in under a minute.
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Upload an Image" icon="image" href="/guides/upload-image">
+    Supported formats, drag-and-drop, and file requirements.
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Configure the Matrix" icon="grid" href="/guides/configure-matrix">
+    Set columns, rows, and aspect-ratio lock for your grid.
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="Export Your Pattern" icon="download" href="/guides/export">
+    PNG, Excel, CSV, Google Sheets, and HTML export formats.
   </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+## What is Image to Alpha Pattern?
 
-Everything you need to create world-class documentation.
+Image to Alpha Pattern is a browser-based tool that takes any photo or graphic and transforms it into a **color-coded symbol matrix** — the kind used for alpha patterns in friendship bracelet making, cross-stitch, perler bead art, and similar crafts.
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+Upload your image, configure the grid size, tweak color thresholds, and the tool produces a numbered grid where each cell shows a letter symbol (A, B, C…) corresponding to a color in a palette legend. You can then export the result as a high-resolution PNG, a color-filled Excel workbook, a CSV, or a Google Sheets-compatible file.
 
-## Need inspiration?
+## Key features
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<CardGroup cols={2}>
+  <Card title="Drag-and-drop upload" icon="upload">
+    Accepts JPG, PNG, and WEBP files. Drop an image on the page or click to browse.
+  </Card>
+  <Card title="Configurable N×M grid" icon="table-cells">
+    Set any number of columns and rows (up to 500 each). Optional aspect-ratio lock keeps proportions correct.
+  </Card>
+  <Card title="Color similarity merging" icon="palette">
+    Reduce palette size by merging colors within a configurable RGB-distance threshold (0–50%).
+  </Card>
+  <Card title="Alpha threshold" icon="droplet">
+    Eliminate semi-transparent edge pixels by setting an opacity cutoff (0–100%).
+  </Card>
+  <Card title="Interactive canvas editor" icon="pen">
+    Zoom, pan, and paint individual cells with a pencil tool. Full undo/redo support.
+  </Card>
+  <Card title="Web Worker processing" icon="bolt">
+    Pixel averaging runs off the main thread so the UI stays responsive for large images.
+  </Card>
+  <Card title="Multiple export formats" icon="file-export">
+    PNG, Excel (.xlsx), color Excel (.xls), CSV, Google Sheets (.xlsx), and HTML exports.
+  </Card>
+  <Card title="Symbol legend" icon="list">
+    Every pattern comes with a palette legend mapping symbols (A, B, AA…) to their exact HEX, R, G, B values.
+  </Card>
+</CardGroup>
+
+## How it works
+
+<Steps>
+  <Step title="Upload an image">
+    Drag a JPG, PNG, or WEBP file onto the upload zone — or click to browse your files. The tool reads the image in your browser; nothing is sent to a server.
+  </Step>
+  <Step title="Configure the matrix">
+    Set the number of columns and rows for your grid. Enable aspect-ratio lock so the tool automatically adjusts the other dimension. Adjust the color-similarity and alpha thresholds to control palette size and edge treatment.
+  </Step>
+  <Step title="Generate the pattern">
+    Click **Generate Pattern**. The image is processed by a Web Worker that averages pixel colors across each grid cell and assigns a letter symbol to every unique color.
+  </Step>
+  <Step title="Preview and edit">
+    The interactive canvas shows your pattern at a glance. Zoom in with the scroll wheel, pan by dragging, or switch to the pencil tool to repaint individual cells. All edits are undoable.
+  </Step>
+  <Step title="Export">
+    Download your pattern as a high-resolution PNG image, a color-filled Excel workbook, a plain CSV, a Google Sheets workbook, or a standalone HTML page.
+  </Step>
+</Steps>

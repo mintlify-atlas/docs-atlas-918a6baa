@@ -1,0 +1,63 @@
+---
+title: "Upload an image"
+description: "Supported file formats and how to load an image into the app"
+---
+
+The app accepts three raster image formats and reads every file entirely in the browser — nothing is sent to a server.
+
+## Supported formats
+
+<Columns cols={3}>
+  <Card title="JPEG / JPG" icon="file-image">
+    Compressed photographs and raster artwork. No transparency channel.
+  </Card>
+  <Card title="PNG" icon="file-image">
+    Lossless images with optional full alpha channel. Best choice for cutout shapes and artwork with transparent backgrounds.
+  </Card>
+  <Card title="WEBP" icon="file-image">
+    Modern format with both lossy and lossless modes. Supports transparency.
+  </Card>
+</Columns>
+
+Any other file type — including GIF, TIFF, SVG, or BMP — is rejected with an inline error message.
+
+## How to upload
+
+<Steps>
+  <Step title="Open the upload zone">
+    The drop zone is displayed when you first open the app. It shows a dashed border and an upload prompt.
+  </Step>
+
+  <Step title="Add your image">
+    You have two options:
+
+    - **Drag and drop** — drag a file from your file manager or desktop and release it anywhere over the drop zone.
+    - **Click to browse** — click anywhere inside the drop zone to open the system file picker, then select a file.
+  </Step>
+
+  <Step title="Wait for the image to load">
+    The app reads the file using the browser's `FileReader` API. For most images this is near-instant. Once loaded, the workspace opens and shows:
+
+    - A thumbnail of your uploaded image.
+    - The detected pixel dimensions (width × height).
+    - The default grid configuration (50 columns, rows auto-calculated from the aspect ratio).
+  </Step>
+</Steps>
+
+## Error handling
+
+If you drop or select a file with an unsupported MIME type, an error message appears directly below the drop zone:
+
+```
+Tipo de archivo no válido: "image/gif". Se aceptan JPG, PNG y WEBP.
+```
+
+The drop zone remains active — you can immediately try a different file without reloading the page.
+
+<Tip>
+  PNG images with a transparent background work especially well. The [alpha threshold](/guides/color-filters) control can cleanly strip semi-transparent edge pixels — for example, the soft anti-aliased border around a logo or illustration — preventing unwanted fringe colors from appearing in your pattern.
+</Tip>
+
+<Note>
+  Very large images (4000 px or more on either side) work fine. The pixel-sampling and color-averaging steps run in a background Web Worker, so the page stays responsive. Expect a slightly longer processing time when you click **Generate Pattern**.
+</Note>

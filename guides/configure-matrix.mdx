@@ -1,0 +1,68 @@
+---
+title: "Configure the matrix"
+description: "Set grid dimensions and control aspect ratio for your alpha pattern"
+---
+
+The matrix is the N×M grid that divides your image into cells. Each cell becomes one color swatch in the final pattern, identified by a letter symbol. Grid size determines how much detail the pattern captures and how many cells you will need to stitch or bead.
+
+## Grid controls
+
+The **Columns** and **Rows** inputs each accept an integer from **1 to 500**.
+
+| Control | Range | Default |
+|---------|-------|---------|
+| Columns | 1–500 | 50 |
+| Rows | 1–500 | Calculated from aspect ratio |
+
+Below the inputs the app displays a live cell-size readout:
+
+```
+Tamaño de celda: 8.0 × 6.4 px · 3 200 celdas en total
+```
+
+This tells you the pixel region of the original image that each cell covers, and the total number of cells. The values update whenever you change either input.
+
+## Aspect-ratio lock
+
+The **Mantener proporción original** checkbox keeps the grid proportional to the uploaded image. It is enabled by default.
+
+When the lock is on:
+
+- Changing **Columns** automatically recalculates Rows: `rows = round(cols × imageHeight / imageWidth)`
+- Changing **Rows** automatically recalculates Columns: `cols = round(rows × imageWidth / imageHeight)`
+
+When the lock is off, Columns and Rows are fully independent and you can set any combination.
+
+<Note>
+  The default on load is **50 columns** with the aspect-ratio lock enabled. Rows are set to `round(50 × imageHeight / imageWidth)` so the first generated pattern already matches the image's proportions.
+</Note>
+
+## Choosing a grid size
+
+There is no single correct size — it depends on your craft and the level of detail you want.
+
+<AccordionGroup>
+  <Accordion title="Small / simple patterns (20–40 cols)">
+    Suitable for narrow friendship bracelets, keychains, or other small-scale projects where individual beads or knots are large relative to the design. Yields a small palette and a fast stitch count.
+  </Accordion>
+
+  <Accordion title="Medium detail (50–80 cols)">
+    The most common range for general-purpose alpha patterns. Enough columns to capture recognizable shapes and gradients without producing an overwhelming number of colors.
+  </Accordion>
+
+  <Accordion title="High detail (100–200 cols)">
+    Good for poster-scale pixel art, detailed cross-stitch, or perler bead projects where you want fine texture and smooth gradients.
+  </Accordion>
+
+  <Accordion title="Maximum detail (up to 500 cols)">
+    Produces the most faithful reproduction of the original image. Best suited for very large craft formats. Expect a large palette, a high cell count, and larger export files.
+  </Accordion>
+</AccordionGroup>
+
+## Applying changes
+
+After adjusting columns, rows, or the aspect-ratio lock, click **Generate Pattern** to rebuild the pattern with the new settings. The canvas and palette update to reflect the new grid.
+
+<Note>
+  More cells means more unique averaged colors before merging. If your palette grows too large after increasing the grid size, raise the [color similarity threshold](/guides/color-filters) to consolidate similar shades.
+</Note>

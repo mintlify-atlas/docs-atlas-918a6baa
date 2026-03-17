@@ -1,0 +1,64 @@
+---
+title: "Preview and edit"
+description: "Navigate the pattern canvas and paint individual cells"
+---
+
+After generating a pattern, the canvas on the right displays the full color grid. You can zoom, pan, and repaint individual cells before exporting.
+
+## Canvas overview
+
+The internal canvas resolution is **900 × 560 px**, scaled to fill the available width of the workspace. Symbol labels are rendered inside each cell when the cell is at least **10 canvas px wide**; at very low zoom levels they are hidden to avoid clutter.
+
+## Navigation
+
+<Columns cols={2}>
+  <Card title="Zoom" icon="magnifying-glass">
+    Scroll the mouse wheel over the canvas to zoom in or out. Each tick scales by a factor of 1.12 (zoom in) or 0.893 (zoom out), centered on the cursor position. The zoom range is **0.15× to 20×**.
+  </Card>
+  <Card title="Pan" icon="hand">
+    Switch to **Move** mode (the hand/pan button), then click and drag to scroll around the canvas.
+  </Card>
+  <Card title="Fit to view" icon="arrows-maximize">
+    Click **Ajustar vista** to reset the zoom level and re-center the entire pattern in the viewport.
+  </Card>
+  <Card title="Symbol labels" icon="font">
+    Letter symbols are visible when each cell is at least 10 px wide on screen. Zoom in to read them clearly on dense grids.
+  </Card>
+</Columns>
+
+## Pencil tool
+
+The pencil tool lets you repaint individual cells after the pattern is generated — useful for correcting mismatched colors, touching up edges, or manually adjusting a small area without regenerating the whole pattern.
+
+<Steps>
+  <Step title="Switch to pencil mode">
+    Click the **Pencil** button in the toolbar. A row of color swatches from the generated palette appears below the toolbar.
+  </Step>
+
+  <Step title="Select a color">
+    Click any swatch to make it the active paint color. The row includes every color currently in the palette, plus a **transparent swatch** (displayed as a checkerboard) that erases cells back to empty.
+  </Step>
+
+  <Step title="Paint cells">
+    Click a cell to paint it, or click and drag across multiple cells to paint in a continuous stroke. All cells touched in a single drag are recorded as **one undo entry**.
+  </Step>
+</Steps>
+
+## Undo and redo
+
+Every pencil stroke is recorded in a history stack. Four buttons control the history:
+
+| Button | Action |
+|--------|--------|
+| ↩ Undo | Reverts the most recent stroke. |
+| ↪ Redo | Reapplies the most recently undone stroke. |
+| ⏮ Undo all | Reverts all strokes at once, restoring the original generated pattern. |
+| ⏭ Redo all | Reapplies all undone strokes at once. |
+
+## Edits in exports
+
+All pencil edits are included in every export. Before rendering or writing any output file, the export functions merge the edit overlay with the original pattern data. What you see on the canvas is exactly what you get in the downloaded file.
+
+<Tip>
+  Use **Undo all** to quickly compare the original generated pattern with your edited version, then **Redo all** to restore your changes.
+</Tip>

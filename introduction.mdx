@@ -1,0 +1,58 @@
+---
+title: "Introduction"
+description: "What Image to Alpha Pattern is and how it works"
+---
+
+Image to Alpha Pattern is a browser-based tool that converts any photo or graphic into a **symbol-labeled color matrix** — the kind used for alpha patterns in friendship bracelet making, cross-stitch, perler bead art, and pixel art crafts. No installation, no account, no server uploads: everything runs locally in your browser.
+
+## How the pattern works
+
+When you generate a pattern, the tool divides your image into an N×M grid. For each cell it samples the average color of that region of the image. Colors that are sufficiently similar (within a configurable RGB-distance threshold) are merged into a single palette entry, keeping the final pattern practical to stitch or bead.
+
+Every unique color in the resulting palette is assigned a letter symbol — A, B, C, and so on, extending to two-character sequences (AA, AB, AC…) when the palette grows large. The output is two things:
+
+- **Symbol matrix** — a grid of letter codes, one per cell, that tells you which color goes where.
+- **Palette legend** — a table mapping each symbol to its exact HEX value and RGB components.
+
+Together these give you everything you need to reproduce the image stitch-by-stitch or bead-by-bead.
+
+## Key capabilities
+
+<Columns cols={2}>
+  <Card title="Drag-and-drop upload" icon="upload" href="/guides/upload-image">
+    Accepts JPG, PNG, and WEBP files. Drop an image onto the upload zone or click to browse. The file is read locally — nothing leaves your browser.
+  </Card>
+  <Card title="Configurable N×M grid" icon="table-cells" href="/guides/configure-matrix">
+    Set columns and rows independently (1–500 each). Optional aspect-ratio lock adjusts the other dimension automatically as you type.
+  </Card>
+  <Card title="Color similarity merging" icon="palette" href="/guides/color-filters">
+    Merge colors within a configurable RGB-distance threshold (0–50) to reduce palette size and simplify the finished pattern.
+  </Card>
+  <Card title="Alpha threshold" icon="droplet" href="/guides/color-filters">
+    Remove semi-transparent edge pixels by setting an opacity cutoff (0–100%). Especially useful for PNG images with soft edges.
+  </Card>
+  <Card title="Interactive canvas editor" icon="pen" href="/guides/preview-and-edit">
+    Zoom with the scroll wheel, pan by dragging, and repaint individual cells with the pencil tool. Full undo/redo support.
+  </Card>
+  <Card title="Web Worker processing" icon="bolt">
+    Pixel averaging runs in a background Web Worker so the UI stays responsive even for large, high-resolution images.
+  </Card>
+  <Card title="Multiple export formats" icon="file-export" href="/guides/export">
+    Download as PNG, Excel (.xlsx), color Excel (.xls), CSV, Google Sheets (.xlsx), or a standalone HTML page.
+  </Card>
+  <Card title="Symbol palette legend" icon="list" href="/guides/preview-and-edit">
+    Every pattern includes a palette legend that maps each letter symbol to its HEX value and R, G, B components.
+  </Card>
+</Columns>
+
+## Workflow overview
+
+The typical workflow takes less than a minute:
+
+1. **Upload** a JPG, PNG, or WEBP image.
+2. **Configure** the grid dimensions and color filters.
+3. **Generate** the pattern with a single button click.
+4. **Preview and edit** the result on the interactive canvas.
+5. **Export** in the format that fits your craft workflow.
+
+Ready to try it? Follow the [Quick start](/quickstart) guide to generate your first pattern.

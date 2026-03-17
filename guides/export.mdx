@@ -1,0 +1,117 @@
+---
+title: "Export your pattern"
+description: "Download your alpha pattern in PNG, Excel, CSV, Google Sheets, or HTML format"
+---
+
+The export panel offers six download options. Choose the format that best fits your workflow.
+
+<Note>
+  Pencil edits made in the canvas editor are always included in every export. The export functions merge the edit overlay with the original pattern data before rendering or writing any file.
+</Note>
+
+<Tabs>
+  <Tab title="PNG">
+    A high-resolution raster image of the full color grid, with symbol labels inside each cell.
+
+    **Cell size calculation**
+
+    The cell size in pixels is chosen so that the longest canvas side stays within **8 000 px**, while each cell is at least **20 px** wide:
+
+    ```
+    CELL = max(20, min(floor(8000 / cols), floor(8000 / rows)))
+    ```
+
+    The final canvas dimensions are:
+
+    ```
+    canvasWidth  = cols × CELL
+    canvasHeight = rows × CELL
+    ```
+
+    **Transparent cells**
+
+    Empty cells (those with no color, from alpha-thresholded pixels or erased pencil strokes) render as a grey checkerboard using alternating `#e0e0e0` and `#c0c0c0` squares.
+
+    **Filename:** `alpha-pattern.png`
+
+    **Best for:** printing, sharing on social media, importing into design tools, or using as a visual reference while crafting.
+  </Tab>
+
+  <Tab title="Excel (.xlsx)">
+    A two-sheet Excel workbook using the standard `.xlsx` format.
+
+    **Sheet: Patrón**
+
+    The symbol matrix. Each cell contains the letter symbol for that grid position. Column widths are set to 4 characters and row heights to 20 pt to approximate square cells.
+
+    **Sheet: Paleta**
+
+    The palette legend with four columns: Symbol, HEX, R, G, B.
+
+    **Note on cell colors**
+
+    The free SheetJS community edition used by the app writes cell values and formatting but does not apply background fill colors in `.xlsx` output. If you need color-filled cells, use the [Excel with color](#) or [Google Sheets](#) export instead.
+
+    **Filename:** `alpha-pattern.xlsx`
+
+    **Best for:** editing the symbol grid in Excel or LibreOffice Calc, or importing into tools that consume `.xlsx` data.
+  </Tab>
+
+  <Tab title="Excel with color (.xls)">
+    An HTML file saved with an `.xls` extension. Excel, LibreOffice Calc, and Numbers open it automatically and display the color-filled table.
+
+    **What it contains**
+
+    - Each cell is filled with the pattern color for that position.
+    - Symbol text is rendered in black or white depending on the cell's luminance, to ensure readability.
+    - An embedded palette table is appended below the pattern grid.
+
+    **Filename:** `alpha-pattern-color.xls`
+
+    **Best for:** quickly opening a color-coded pattern in a desktop spreadsheet application without requiring a Google account.
+  </Tab>
+
+  <Tab title="CSV">
+    A plain-text CSV file encoded in **UTF-8 with BOM**. The BOM ensures that Excel and Google Sheets correctly auto-detect the encoding when you open or import the file.
+
+    **File structure**
+
+    1. Rows 1–N: the symbol matrix, one row per grid row.
+    2. A blank line separator.
+    3. Palette legend section: columns Symbol, HEX, R, G, B — one row per palette entry.
+
+    **Filename:** `alpha-pattern.csv`
+
+    **Best for:** programmatic processing, importing into custom scripts or tools, or loading into any application that accepts delimited text.
+  </Tab>
+
+  <Tab title="Google Sheets (.xlsx)">
+    An `.xlsx` workbook built with ARGB color fills that Google Sheets renders correctly when you import it via **File → Import**.
+
+    **Sheet: Patrón**
+
+    Color-filled cells with symbol labels. Text is bold and rendered in a contrasting color (black or white based on cell luminance).
+
+    **Sheet: Paleta**
+
+    Legend with color-filled HEX and swatch columns so you can see each palette entry at a glance.
+
+    **Filename:** `alpha-pattern-sheets.xlsx`
+
+    **Best for:** collaborating on a pattern in Google Sheets or keeping a shareable, color-coded reference in Google Drive.
+  </Tab>
+
+  <Tab title="HTML with color">
+    A self-contained HTML page that opens in any web browser without any additional software.
+
+    **What it contains**
+
+    - A color-filled HTML table matching the full pattern grid.
+    - A palette legend below the table.
+    - A dark-themed layout (dark background, light text) for comfortable on-screen viewing.
+
+    **Filename:** `alpha-pattern-color.html`
+
+    **Best for:** sharing a visual reference with someone who does not have Excel or Google Sheets, or keeping a portable pattern file you can open offline in any browser.
+  </Tab>
+</Tabs>

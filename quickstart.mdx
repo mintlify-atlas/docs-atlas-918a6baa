@@ -1,80 +1,65 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: "Quick start"
+description: "Generate your first alpha pattern in under a minute"
 ---
 
-## Get started in three steps
+<Steps>
+  <Step title="Open the app">
+    Navigate to the app in a modern browser — Chrome, Firefox, Edge, and Safari are all supported. No installation and no account are required.
+  </Step>
 
-Get your documentation site running locally and make your first customization.
+  <Step title="Upload an image">
+    Drag a JPG, PNG, or WEBP image onto the drop zone, or click the zone to open a file browser. The tool reads the file locally using the browser's `FileReader` API — nothing is sent to a server.
 
-### Step 1: Set up your local environment
+    <Note>
+      Transparent PNG images work especially well. The alpha threshold control can cleanly remove semi-transparent border pixels that would otherwise create unwanted fringe colors around the edges of your pattern.
+    </Note>
+  </Step>
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+  <Step title="Configure the grid">
+    The grid defaults to **50 columns × 50 rows** with aspect-ratio lock enabled.
 
-### Step 2: Deploy your changes
+    Adjust the **Columns** field and the **Rows** field updates automatically to preserve your image's proportions. For a friendship bracelet pattern, a width of 30–80 columns is typical. Wider grids produce more detail; narrower grids produce simpler, faster patterns.
+  </Step>
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+  <Step title="Adjust color filters (optional)">
+    Two sliders let you control how colors are handled before the pattern is built:
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+    - **Color similarity threshold** (0–50) — merges colors within the given RGB distance. Start at `0` and increase gradually until the palette reaches a manageable size for your craft.
+    - **Alpha threshold** (0–100%) — removes pixels below the given opacity level. A value of 20–30% is a good starting point for PNG images with soft or anti-aliased edges.
+  </Step>
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+  <Step title="Generate the pattern">
+    Click the **Generar Patrón** button. Processing runs in a background Web Worker — a spinner appears while the image is being analyzed, and the canvas updates as soon as the result is ready.
+  </Step>
 
-### Step 3: Go live
+  <Step title="Preview the result">
+    The canvas on the right shows the full color grid. Use these controls to inspect it:
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+    - **Scroll** to zoom in and out.
+    - **Drag** to pan across the canvas.
+    - **Pencil tool** — switch to the pencil to repaint individual cells by clicking or dragging.
+    - **Undo / redo** buttons let you step back through any manual edits.
 
-## Next steps
+    The palette legend below the canvas maps each letter symbol (A, B, C, AA…) to its HEX value and RGB components.
+  </Step>
 
-Now that you have your docs running, explore these key features:
+  <Step title="Export">
+    Choose a format from the export panel and click the corresponding button to download:
 
-<CardGroup cols={2}>
+    | Format | Best for |
+    |--------|----------|
+    | PNG | Sharing or printing the pattern as an image |
+    | Excel (.xlsx) | Editing in spreadsheet software without color fill |
+    | Excel colored (.xls) | Spreadsheet with cells filled in the correct colors |
+    | CSV | Importing into other tools or scripts |
+    | Google Sheets (.xlsx colored) | Uploading to Google Sheets with color fill |
+    | HTML colored | Self-contained HTML page viewable in any browser |
 
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
+    See the [Export guide](/guides/export) for details on each format.
+  </Step>
+</Steps>
 
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
-</CardGroup>
-
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>
+<Tip>
+  Start with a higher color threshold to get a simpler pattern with fewer colors — this is easier to stitch or bead and quicker to count. Once you're happy with the overall shape, reduce the threshold and regenerate to add more color detail.
+</Tip>

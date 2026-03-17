@@ -1,0 +1,195 @@
+---
+title: "Image processing"
+description: "How pixel averaging, color merging, and symbol assignment work under the hood"
+---
+
+## Overview
+
+When you load an image, the tool renders it at full resolution onto a hidden canvas, then divides that canvas into an N×M grid. Each cell is sampled by averaging the colors of all non-transparent pixels inside it. The result is a `colorMatrix` of averaged cell colors. From there, similar colors can be merged together using a configurable threshold, and each unique color is assigned a letter symbol for use in pattern charts.
+
+## Cell averaging
+
+For each cell at position `(col, row)`, the pixel boundaries are calculated proportionally:
+
+```javascript
+x0 = round((col / cols) * W)
+x1 = round(((col + 1) / cols) * W)
+y0 = round((row / rows) * H)
+y1 = round(((row + 1) / rows) * H)
+```
+
+All pixels within those bounds are examined. Only pixels whose alpha channel exceeds `minAlpha` are included in the average. If no pixels pass the alpha threshold (i.e. `count === 0`), the cell is marked as transparent and receives no color.
+
+For non-transparent cells:
+
+```javascript
+r = round(rSum / count)
+g = round(gSum / count)
+b = round(bSum / count)
+```
+
+## Alpha threshold
+
+The `alphaThreshold` option (0–100) controls the minimum opacity a pixel must have to be counted. It is converted to a 0–255 scale before comparison:
+
+```
+minAlpha = round((alphaThreshold / 100) × 255)
+```
+
+| `alphaThreshold` | `minAlpha` | Effect |
+|---|---|---|
+| `0` | `0` | All pixels counted, including fully transparent |
+| `50` | `128` | Only pixels more than 50% opaque are counted |
+| `100` | `255` | Only fully opaque pixels are counted |
+
+<Tip>
+A value of `0` means even fully transparent pixels contribute to the cell average. Use a threshold of at least `1` to exclude transparent pixels entirely.
+</Tip>
+
+## Color merging
+
+After cell averaging, the palette may contain many slightly different colors. The `colorThreshold` option (0–50) controls how aggressively similar colors are merged together.
+
+The maximum possible Euclidean distance between two RGB colors is:
+
+```
+MAX_RGB_DIST = √(3 × 255²) ≈ 441.67
+```
+
+The merge threshold is derived from the percentage:
+
+```
+threshold = (colorThreshold / 100) × MAX_RGB_DIST
+```
+
+The algorithm (`mergeColorsByThreshold`) is greedy and processes colors in insertion order:
+
+1. For each color in the palette, find the closest existing **representative** color using Euclidean RGB distance.
+2. If the distance is less than or equal to `threshold`, the color is merged into that representative.
+3. If the distance exceeds `threshold`, the color becomes a new representative.
+
+Both `colorMatrix` and `paletteMap` are mutated in place. Transparent cells are never merged.
+
+<Note>
+Because the algorithm is greedy, the output can vary slightly depending on the insertion order of colors in the palette.
+</Note>
+
+## Symbol assignment
+
+Each unique color in the final palette is assigned a symbol using `indexToSymbol`. The symbols follow a spreadsheet-column style encoding:
+
+| Index | Symbol |
+|---|---|
+| 0 | `A` |
+| 1 | `B` |
+| … | … |
+| 25 | `Z` |
+| 26 | `AA` |
+| 27 | `AB` |
+| … | … |
+| 51 | `AZ` |
+| 52 | `BA` |
+
+This allows an unbounded number of unique colors to be represented with short, readable labels.
+
+## Helper functions
+
+### `indexToSymbol(index)`
+
+Converts a zero-based integer index to a symbol string.
+
+```javascript
+indexToSymbol(0)   // 'A'
+indexToSymbol(25)  // 'Z'
+indexToSymbol(26)  // 'AA'
+indexToSymbol(701) // 'ZZ'
+```
+
+### `toHex(r, g, b)`
+
+Converts integer RGB components (0–255) to a lowercase hex color string.
+
+```javascript
+toHex(255, 0, 128) // '#ff0080'
+toHex(0, 0, 0)     // '#000000'
+```
+
+### `getTextColor(r, g, b)`
+
+Returns `'#000000'` or `'#ffffff'` depending on the perceptual brightness of the color, using the BT.601 luma formula:
+
+```
+luma = 0.299r + 0.587g + 0.114b
+```
+
+If `luma > 128`, the background is considered light and black text is returned. Otherwise, white text is returned.
+
+| `luma` result | Text color returned |
+|---|---|
+| > 128 | `#000000` (dark) |
+| ≤ 128 | `#ffffff` (light) |
+
+## Web Worker
+
+`processImageAsync` is the async version of `processImage`. It uses a Web Worker and `OffscreenCanvas` to run pixel sampling off the main thread, keeping the UI responsive for large images or grids.
+
+The function feature-detects support before attempting to use the worker:
+
+```javascript
+if (typeof Worker !== 'undefined' && typeof OffscreenCanvas !== 'undefined') {
+  // Run in worker using createImageBitmap for zero-copy transfer
+} else {
+  // Fall back to synchronous processImage
+}
+```
+
+`createImageBitmap` is used to transfer the image data to the worker without copying pixel buffers, improving performance for large images. If the worker throws any error, the function automatically falls back to the synchronous `processImage`.
+
+## Return value
+
+`processImage` and `processImageAsync` both return the same structure:
+
+<ResponseField name="colorMatrix" type="Array<Array<object>>" required>
+  A 2D array of cell color objects indexed as `colorMatrix[row][col]`.
+
+  <Expandable title="Cell object properties">
+    <ResponseField name="r" type="number" required>
+      Red channel, 0–255. Only meaningful when `transparent` is `false`.
+    </ResponseField>
+    <ResponseField name="g" type="number" required>
+      Green channel, 0–255. Only meaningful when `transparent` is `false`.
+    </ResponseField>
+    <ResponseField name="b" type="number" required>
+      Blue channel, 0–255. Only meaningful when `transparent` is `false`.
+    </ResponseField>
+    <ResponseField name="hex" type="string | null" required>
+      Hex color string (e.g. `#ff0080`), or `null` if the cell is transparent.
+    </ResponseField>
+    <ResponseField name="transparent" type="boolean" required>
+      `true` if no pixels in this cell exceeded the alpha threshold.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="paletteMap" type="Map<string, object>" required>
+  A `Map` keyed by hex color string. Each value describes the color's symbol and components.
+
+  <Expandable title="Palette entry properties">
+    <ResponseField name="symbol" type="string" required>
+      Letter symbol assigned to this color (e.g. `A`, `AA`).
+    </ResponseField>
+    <ResponseField name="r" type="number" required>
+      Red channel, 0–255.
+    </ResponseField>
+    <ResponseField name="g" type="number" required>
+      Green channel, 0–255.
+    </ResponseField>
+    <ResponseField name="b" type="number" required>
+      Blue channel, 0–255.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="symbolMatrix" type="Array<Array<string | null>>" required>
+  A 2D array indexed as `symbolMatrix[row][col]`. Each entry is the symbol string for that cell, or `null` if the cell is transparent.
+</ResponseField>
