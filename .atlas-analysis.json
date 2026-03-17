@@ -1,0 +1,64 @@
+{
+  "projectType": "frontend",
+  "projectName": "Image to Alpha Pattern",
+  "projectDescription": "A browser-based React tool that converts any image into a symbol-labeled color-matrix alpha pattern, with configurable grid dimensions, color merging, alpha thresholds, an interactive pencil editor, and multi-format export (PNG, Excel, CSV, Google Sheets, HTML).",
+  "theme": "palm",
+  "primaryColor": "#6366f1",
+  "lightColor": "#e0e7ff",
+  "darkColor": "#1e1b4b",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": ["introduction", "quickstart"]
+          },
+          {
+            "group": "Using the App",
+            "pages": [
+              "guides/upload-image",
+              "guides/configure-matrix",
+              "guides/color-filters",
+              "guides/preview-and-edit",
+              "guides/export"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "reference/image-processing",
+              "reference/export-formats",
+              "reference/keyboard-shortcuts"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Drag-and-drop image upload (JPG, PNG, WEBP)",
+    "Configurable N×M grid matrix with optional aspect-ratio lock",
+    "Color similarity merging via RGB-distance threshold (0–50%)",
+    "Alpha/transparency threshold to eliminate semi-transparent pixels",
+    "Interactive canvas preview with zoom, pan, and pencil editing",
+    "Undo / redo / undo-all / redo-all for pencil edits",
+    "Web Worker offloading for non-blocking pixel processing",
+    "Export to PNG (high-resolution), Excel (.xlsx), Excel with color (.xls), CSV, Google Sheets (.xlsx with color), HTML with color"
+  ],
+  "publicApiSurface": [
+    "processImage(img, cols, rows, options) → { colorMatrix, paletteMap, symbolMatrix }",
+    "processImageAsync(img, cols, rows, options) → Promise<{ colorMatrix, paletteMap, symbolMatrix }>",
+    "exportToPNG(patternData, patternConfig, filename?)",
+    "exportToExcel(patternData, patternConfig, filename?)",
+    "exportToExcelColored(patternData, patternConfig, filename?)",
+    "exportToCSV(patternData, patternConfig, filename?)",
+    "exportToCSVColored(patternData, patternConfig, filename?)",
+    "exportToGoogleSheetsColored(patternData, patternConfig, filename?)",
+    "toHex(r, g, b) → string",
+    "getTextColor(r, g, b) → '#000000' | '#ffffff'",
+    "indexToSymbol(index) → string",
+    "ImageProvider / useImage() context hook"
+  ]
+}
